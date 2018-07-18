@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="js/echarts.min.js"></script>
+    <script src="js/jquery-2.1.4.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+
+</head>
+<body>
+<div id="container" style="background-color:gray;">
+		<h1 style="font-size: 22px;color: #000;text-align:'center'">内蒙古预警信息发布中心</h1>
+        <h4><span id="eachGroupPubCount"></span><span id="curYearPublicCount"></span></h4>
+ 		<!--内蒙古预警信息发布中心-->
+        <div class="chart_con pull-left">
+            <!-- Nav tabs -->
+            <ul class="nav navbar-nav" role="tablist">
+                <li role="presentation" class="active" id="yearMonitorAndAssess">
+                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab">
+                        年
+                    </a>
+                </li>
+                <li role="presentation" id="quaterMonitorAndAssess">
+                    <a href="#week" aria-controls="week" role="tab" data-toggle="tab">
+                        季
+                    </a>
+                </li>
+                <li role="presentation" id="monthMonitorAndAssess">
+                    <a href="#today" aria-controls="today" role="tab" data-toggle="tab">
+                        月
+                    </a>
+                </li>
+
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="all">
+                    <div>
+                        <div class="img" id="allYearAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="week">
+                    <div>
+                        <div class="img" id="allQuarterAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="today">
+                    <div>
+                        <div class="img" id="allMonthAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--内蒙古预警信息发布中心结束-->
+        <!--柱状图和top开始-->
+        <div class="view_chart_con">
+            <!--柱状图-->
+            <div class="view_chart0">
+                <div class="container-1">
+                    <div id="container-1"></div>
+                </div>
+            </div>
+            <!--柱状图结束-->
+
+            <!--top-->
+            <div class="view_chart1">
+                <div class="top-area">
+                    <span class="top-tit center-block">地区排行top10</span>
+                    <table id="alertAreaRankHot">
+
+                    </table>
+
+                </div>
+                <div class="top-info">
+                    <span class="top-tit center-block">预警排行top10</span>
+                    <table id="alertDisaRankHot">
+
+                    </table>
+                </div>
+
+            </div>
+            <!--top结束-->
+        </div>
+        <!--柱状图和top结束-->
+ 
+
+</div>
+</body>
+</html>
