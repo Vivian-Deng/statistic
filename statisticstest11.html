@@ -1,0 +1,3972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>统计视图</title>
+    <link rel="stylesheet" href="../resources/bootstrap/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="../resources/css/double-date.css"/>
+    <link rel="stylesheet" href="../resources/css/statisticstest.css">
+    <link rel="stylesheet" href="../resources/css/statisticstest1.css">
+    <script src="../resources/js/jquery2.1.min.js"></script>
+    <script src="../resources/js/highcharts1/highcharts.js"></script>
+    <script src="../resources/js/double-date.js"></script>
+    <script src="../resources/js/bootstrap.min.js"></script>
+    <script src="../js/echarts.min.js"></script>
+    <script src="../js/global.js"></script>
+
+
+</head>
+
+<script>
+
+    var Global = {
+        common: {
+            ajaxPath: (window.location + "").split("/")[0] + "//" + (window.location + "").split("/")[2] + "/" + (window.location + "").split("/")[3]
+        },
+        //实况监测
+        monitor: {
+            yjxh: [
+                {flag: "yj_12_2", name: "大雾", level: "黄色"},
+                {flag: "yj_12_3", name: "大雾", level: "橙色"},
+                {flag: "yj_12_4", name: "大雾", level: "红色"},
+                {flag: "yj_13_2", name: "霾", level: "黄色"},
+                {flag: "yj_13_3", name: "霾", level: "橙色"},
+                {flag: "yj_14_2", name: "道路结冰", level: "黄色"},
+                {flag: "yj_14_3", name: "道路结冰", level: "橙色"},
+                {flag: "yj_14_4", name: "道路结冰", level: "红色"},
+                {flag: "yj_1_2", name: "台风", level: "黄色"},
+                {flag: "yj_1_3", name: "台风", level: "橙色"},
+                {flag: "yj_1_4", name: "台风", level: "红色"},
+                {flag: "yj_6_3", name: "沙尘暴", level: "橙色"},
+                {flag: "yj_6_4", name: "沙尘暴", level: "红色"},
+                {flag: "yj_7_2", name: "高温", level: "黄色"},
+                {flag: "yj_7_3", name: "高温", level: "橙色"},
+                {flag: "yj_7_4", name: "高温", level: "红色"},
+                {flag: "yj_8_3", name: "干旱", level: "橙色"},
+                {flag: "yj_8_4", name: "干旱", level: "红色"},
+                {flag: "yj_9_2", name: "雷电", level: "黄色"},
+                {flag: "yj_9_3", name: "雷电", level: "橙色"},
+                {flag: "yj_9_4", name: "雷电", level: "红色"},
+                {flag: "yj_10_3", name: "冰雹", level: "橙色"},
+                {flag: "yj_10_4", name: "冰雹", level: "红色"},
+                {flag: "yj_11_1", name: "霜冻", level: "蓝色"},
+                {flag: "yj_11_2", name: "霜冻", level: "黄色"},
+                {flag: "yj_11_3", name: "霜冻", level: "橙色"},
+                {flag: "yj_15_2", name: "森林火险", level: "黄色"},
+                {flag: "yj_15_3", name: "森林火险", level: "橙色"},
+                {flag: "yj_15_4", name: "森林火险", level: "红色"},
+                {flag: "yj_2_1", name: "暴雨", level: "蓝色"},
+                {flag: "yj_2_2", name: "暴雨", level: "黄色"},
+                {flag: "yj_2_3", name: "暴雨", level: "橙色"},
+                {flag: "yj_2_4", name: "暴雨", level: "红色"},
+                {flag: "yj_3_1", name: "暴雪", level: "蓝色"},
+                {flag: "yj_3_2", name: "暴雪", level: "黄色"},
+                {flag: "yj_3_3", name: "暴雪", level: "橙色"},
+                {flag: "yj_3_4", name: "暴雪", level: "红色"},
+                {flag: "yj_4_1", name: "寒潮", level: "蓝色"},
+                {flag: "yj_4_2", name: "寒潮", level: "黄色"},
+                {flag: "yj_4_3", name: "寒潮", level: "橙色"},
+                {flag: "yj_4_4", name: "寒潮", level: "红色"},
+                {flag: "yj_1_1", name: "台风", level: "蓝色"},
+                {flag: "yj_5_1", name: "大风", level: "蓝色"},
+                {flag: "yj_5_2", name: "大风", level: "黄色"},
+                {flag: "yj_5_3", name: "大风", level: "橙色"},
+                {flag: "yj_5_4", name: "大风", level: "红色"},
+                {flag: "yj_6_2", name: "沙尘暴", level: "黄色"}
+            ],
+            jcbj: [
+                {flag: "HighTempMonitor", name: "高温", status: 1},
+                {flag: "LowTempMonitor", name: "低温", status: 1},
+                {flag: "2MinAvgWinMonitor", name: "2分钟平均风速", status: 1},
+                {flag: "10MinAvgWinMonitor", name: "10分钟平均风速", status: 1},
+                {flag: "1HourPreMonitor", name: "过去1小时降水量", status: 1},
+                {flag: "3HourPreMonitor", name: "过去3小时降水量", status: 1}
+            ],
+            color: [
+                {name: "蓝色", value: "#0000FF"},
+                {name: "黄色", value: "#FFFF00"},
+                {name: "橙色", value: "#FFA500"},
+                {name: "红色", value: "#FF0000"},
+                {name: "绿色", value: "#00FF00"}
+            ],
+            imgUrl: [
+                {
+                    name: "BlueHighTempMonitor",
+                    value: "/resources/images/indexMap/BlueHighTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "OrangeHighTempMonitor",
+                    value: "resources/images/indexMap/OrangeHighTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "RedHighTempMonitor",
+                    value: "resources/images/indexMap/RedHighTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "BlueLowTempMonitor",
+                    value: "resources/images/indexMap/BlueLowTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "OrangeLowTempMonitor",
+                    value: "resources/images/indexMap/OrangeLowTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "RedLowTempMonitor",
+                    value: "resources/images/indexMap/RedLowTempMonitor.gif",
+                    rotation: false,
+                    width: 30,
+                    height: 30
+                },
+                {
+                    name: "2MinAvgBuleWinMonitor",
+                    value: "resources/images/indexMap/BlueWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "2MinAvgOrangeWinMonitor",
+                    value: "resources/images/indexMap/OrangeWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "2MinAvgRedWinMonitor",
+                    value: "resources/images/indexMap/RedWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "10MinAvgBuleWinMonitor",
+                    value: "resources/images/indexMap/BlueWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "10MinAvgOrangeWinMonitor",
+                    value: "resources/images/indexMap/OrangeWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "10MinAvgRedWinMonitor",
+                    value: "resources/images/indexMap/RedWinMonitor.png",
+                    rotation: true,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "1HourBulePreMonitor",
+                    value: "resources/images/indexMap/BluePreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "1HourOrangePreMonitor",
+                    value: "resources/images/indexMap/OrangePreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "1HourRedPreMonitor",
+                    value: "resources/images/indexMap/RedPreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "3HourBulePreMonitor",
+                    value: "resources/images/indexMap/BluePreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "3HourOrangePreMonitor",
+                    value: "resources/images/indexMap/OrangePreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "3HourRedPreMonitor",
+                    value: "resources/images/indexMap/RedPreMonitor.gif",
+                    rotation: false,
+                    width: 20,
+                    height: 20
+                },
+                {
+                    name: "yj_12_2",
+                    value: "resources/images/indexMap/heavyfog_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_12_3",
+                    value: "resources/images/indexMap/heavyfog_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_12_4",
+                    value: "resources/images/indexMap/heavyfog_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_13_2",
+                    value: "resources/images/indexMap/haze_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_13_3",
+                    value: "resources/images/indexMap/haze_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_14_2",
+                    value: "resources/images/indexMap/roadicing_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_14_3",
+                    value: "resources/images/indexMap/roadicing_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_14_4",
+                    value: "resources/images/indexMap/roadicing_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_1_2",
+                    value: "resources/images/indexMap/typhoon_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_1_3",
+                    value: "resources/images/indexMap/typhoon_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_1_4",
+                    value: "resources/images/indexMap/typhoon_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_6_3",
+                    value: "resources/images/indexMap/shachengbao_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_6_4",
+                    value: "resources/images/indexMap/shachengbao_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_7_2",
+                    value: "resources/images/indexMap/heatwave_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_7_3",
+                    value: "resources/images/indexMap/heatwave_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_7_4",
+                    value: "resources/images/indexMap/heatwave_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_8_3",
+                    value: "resources/images/indexMap/drought_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_8_4",
+                    value: "resources/images/indexMap/drought_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_9_2",
+                    value: "resources/images/indexMap/lightning_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_9_3",
+                    value: "resources/images/indexMap/lightning_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_9_4",
+                    value: "resources/images/indexMap/lightning_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_10_3",
+                    value: "resources/images/indexMap/hail_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_10_4",
+                    value: "resources/images/indexMap/hail_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_11_1",
+                    value: "resources/images/indexMap/frost_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_11_2",
+                    value: "resources/images/indexMap/frost_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_11_3",
+                    value: "resources/images/indexMap/frost_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_2_1",
+                    value: "resources/images/indexMap/rainstorm_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_2_2",
+                    value: "resources/images/indexMap/rainstorm_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_2_3",
+                    value: "resources/images/indexMap/rainstorm_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_2_4",
+                    value: "resources/images/indexMap/rainstorm_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_3_1",
+                    value: "resources/images/indexMap/snowstorm_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_3_2",
+                    value: "resources/images/indexMap/snowstorm_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_3_3",
+                    value: "resources/images/indexMap/snowstorm_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_3_4",
+                    value: "resources/images/indexMap/snowstorm_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_4_1",
+                    value: "resources/images/indexMap/coldwave_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_4_2",
+                    value: "resources/images/indexMap/coldwave_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_4_3",
+                    value: "resources/images/indexMap/coldwave_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_4_4",
+                    value: "resources/images/indexMap/coldwave_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_1_1",
+                    value: "resources/images/indexMap/typhoon_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_5_1",
+                    value: "resources/images/indexMap/gale_blue.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_5_2",
+                    value: "resources/images/indexMap/gale_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_5_3",
+                    value: "resources/images/indexMap/gale_orange.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_5_4",
+                    value: "resources/images/indexMap/gale_red.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                },
+                {
+                    name: "yj_6_2",
+                    value: "resources/images/indexMap/shachengbao_yellow.jpg",
+                    rotation: false,
+                    width: 25,
+                    height: 25
+                }
+            ],
+            info: [
+                {flag: "2MinAvgWinMonitor", info1: "2分钟平均风速", info2: "2分钟平均风向", info2Unit: "度"},
+                {flag: "10MinAvgWinMonitor", info1: "10分钟平均风速", info2: "10分钟平均风向", info2Unit: "度"}
+            ]
+        }
+    }
+    /**$(function(){
+            		/**
+     *@author yuancb
+     *@note 预警发布各市预警横向柱状图
+     *@time 2017-08-05
+     */
+    /** var MonitorAssessCityAlertCountArray=[];
+     var MonitorAssessCityAlertNameArray=[];
+     //alert("sddsds");
+     $.ajax({
+				    async: false,
+			        url: Global.common.ajaxPath+"/monitorAndAssess/getAlertMonitorAssessMap.do",
+			        success: function (data){
+			        console.log(data+"----------");
+				    var objArray = eval("("+data+")");
+				    $.each(objArray,function(index,value){
+				    MonitorAssessCityAlertCountArray[index]=value.value;
+				    MonitorAssessCityAlertNameArray[index]=value.name;
+				    })
+				    console.log(MonitorAssessCityAlertNameArray+"----------------------------------------------------------");
+				    console.log(MonitorAssessCityAlertCountArray+"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+					},
+			    	error: function (xhr) { console.log('加载预警各市横向柱状图出错！'); }
+					});
+     })*/
+    $(function () {
+    	/**
+    	*@author yuancb
+    	*@note 按照年统计和评估
+    	*@time  2017-08-18
+    	*/
+    	landscapeMonitorAndAssessByYear();
+    	hightTemperatureListByYear();
+    	orgPieChartByYear();
+    	alertAreaPeiChartByYear();
+    	alertLevelPeiChartByYear();
+    	alertDisasterPeiChartByYear();
+    	alertMapEachMonthByYear();
+        /**
+         *@author yuancb
+         *@note 预警发布手段次数统计
+         *@time 2017-08-04
+         */
+        var releaseCountArray = [];
+        var releaseNameArray = [];
+        $.ajax({
+            async: false,
+            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMethodranking.do",
+            success: function (data) {
+                if (data != null && data != "") {
+                    $.each(data, function (index, value) {
+                        releaseNameArray[index] = value.monitorName;
+                        releaseCountArray[index] = value.monitorCount;
+                    });
+                }
+            },
+            error: function (xhr) {
+                console.log('加载预警发布手段次数出错！');
+            }
+        });
+        /**
+         *@note 预警次数统计
+         *@time 2017-08-04
+         */
+        $('#container-1').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '预警次数统计'
+            },
+            xAxis: {
+                categories: releaseNameArray
+                /**categories: [
+                 '手机APP',
+                 '12379微信',
+                 '12379网站',
+                 '预警短信',
+                 '应急广播',
+                 '微博',
+                 '电视插播',
+                 '电子显示屏',
+                 '电台广播',
+                 '邮件发布',
+                 '传真发布',
+                 '预警收音机'
+                 ]*/
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '预警发布数量'
+                },
+                stackLabels: {
+                    enabled: true,
+                    style: {
+                        fontWeight: 'bold',
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                    }
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b style="color: #0C0C0C">' + this.x + '</b><br/>' +
+                            this.series.name + ': ' + this.y + '<br/>' +
+                            '总量: ' + this.point.stackTotal;
+
+                }
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+//                        enabled: true,
+                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                        style: {
+//                            textShadow: '0 0 3px black'
+
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: ' ',
+                data: releaseCountArray,
+                //data: [102, 140, 211, 119, 115, 109, 145, 152, 124, 121, 169, 115],
+                color: 'yellow'
+            }]
+        });
+    
+        /**
+         *@author yuancb
+         *@note 预警灾种事件排行
+         *@time 2017-08-03
+         */
+        $.ajax({
+            async: false,
+            url: Global.common.ajaxPath + "/monitorAndAssess/getDisaranking.do",
+            success: function (data) {
+                var globleDisaHot = "<tr class='tit'>" +
+                        "<th class='t1'>序号</th>" +
+                        "<th class='t2'>预警类型</th>" +
+                        "<th class='t3'>数量</th>" +
+                        "</tr>";
+                if (data != null && data != "") {
+                    $.each(data, function (index, value) {
+                        globleDisaHot += "<tr>" +
+                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+                                "<td class='t2'>" + value.monitorName + "</td>" +
+                                "<td class='t3'>" + value.monitorCount + "</td>" +
+                                "</tr>";
+                    });
+                    $("#alertDisaRankHot").html(globleDisaHot);
+                    $("#alertDisaRankHot span:eq(0)").addClass("span");
+                    $("#alertDisaRankHot span:eq(1)").addClass("span");
+                    $("#alertDisaRankHot span:eq(2)").addClass("span");
+                }
+            },
+            error: function (xhr) {
+                console.log('加载预警事件出错！');
+            }
+        });
+
+        /**
+         *@author yuancb
+         *@note 预警区划排行
+         *@time 2017-08-03
+         */
+        $.ajax({
+            async: false,
+            url: Global.common.ajaxPath + "/monitorAndAssess/getArearanking.do",
+            success: function (data) {
+                var globleAreaHot = "<tr class='tit'>" +
+                        "<th class='t1'>序号</th>" +
+                        "<th class='t2'>地区</th>" +
+                        "<th class='t3'>数量</th>" +
+                        "</tr>";
+                if (data != null && data != "") {
+                    $.each(data, function (index, value) {
+                        globleAreaHot += "<tr>" +
+                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+                                "<td class='t2'>" + value.monitorName + "</td>" +
+                                "<td class='t3'>" + value.monitorCount + "</td>" +
+                                "</tr>";
+                    });
+                    $("#alertAreaRankHot").html(globleAreaHot);
+                    $("#alertAreaRankHot span:eq(0)").addClass("span");
+                    $("#alertAreaRankHot span:eq(1)").addClass("span");
+                    $("#alertAreaRankHot span:eq(2)").addClass("span");
+                }
+            },
+            error: function (xhr) {
+                console.log('加载预警区划出错！');
+            }
+        });
+
+        /**
+         *@author yuancb
+         *@note 预警总数
+         *@time 2017-08-05
+         */
+        $.ajax({
+            async: false,
+            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYearCount.do",
+            success: function (data) {
+                $("#eachGroupPubCount").text("年发布总数:");
+                $("#curYearPublicCount").text(data);
+            },
+            error: function (xhr) {
+                console.log('加载预警总数出错！');
+            }
+        });
+
+        /**
+         *@author yuancb
+         *@note 全年预警预警
+         *@time 2017-08-05
+         */
+        $.ajax({
+            async: false,
+            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYear.do",
+            success: function (data) {
+                var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+                if (data != null && data != "") {
+                    $.each(data, function (index, value) {
+                        if (value.monitorName != null) {
+                            //alert(value.monitorName);
+                            var imgFlag = "";
+                            var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+                            for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+                                if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+                                    imgFlag = Global.monitor.yjxh[j].flag;
+                                    break;
+                                }
+                            }
+                            for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+                                if (imgFlag == Global.monitor.imgUrl[j].name) {
+                                    imgUrl = Global.monitor.imgUrl[j].value;
+                                    break;
+                                }
+                            }
+                            globleAllYeayAlertInfo += "<img src='../" + imgUrl + "'>" +
+                                    "<div class='ssyjxx center-block'>" +
+                                    "<div>" +
+                                    "<a href=''>" + value.monitorName + "</a>" +
+                                    "</div>" +
+                                    "</div>";
+                        }
+                    });
+                }
+                $("#allYearAlertInfo").html(globleAllYeayAlertInfo);
+            },
+            error: function (xhr) {
+                console.log('加载预警年预警信息出错！');
+            }
+        });
+        
+        yearMonitorAndAssess.addEventListener('click',function(){
+        	/**
+	    	*@author yuancb
+	    	*@note 按照年统计和评估
+	    	*@time  2017-08-18
+	    	*/
+	    	landscapeMonitorAndAssessByYear();
+	    	hightTemperatureListByYear();
+	    	orgPieChartByYear();
+	    	alertAreaPeiChartByYear();
+	    	alertLevelPeiChartByYear();
+	    	alertDisasterPeiChartByYear();
+	    	alertMapEachMonthByYear();
+	        /**
+	         *@author yuancb
+	         *@note 预警发布手段次数统计
+	         *@time 2017-08-04
+	         */
+	        var releaseCountArray = [];
+	        var releaseNameArray = [];
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMethodranking.do",
+	            success: function (data) {
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        releaseNameArray[index] = value.monitorName;
+	                        releaseCountArray[index] = value.monitorCount;
+	                    });
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警发布手段次数出错！');
+	            }
+	        });
+	        /**
+	         *@note 预警次数统计
+	         *@time 2017-08-04
+	         */
+	        $('#container-1').highcharts({
+	            chart: {
+	                type: 'column'
+	            },
+	            title: {
+	                text: '预警次数统计'
+	            },
+	            xAxis: {
+	                categories: releaseNameArray
+	                /**categories: [
+	                 '手机APP',
+	                 '12379微信',
+	                 '12379网站',
+	                 '预警短信',
+	                 '应急广播',
+	                 '微博',
+	                 '电视插播',
+	                 '电子显示屏',
+	                 '电台广播',
+	                 '邮件发布',
+	                 '传真发布',
+	                 '预警收音机'
+	                 ]*/
+	            },
+	            yAxis: {
+	                min: 0,
+	                title: {
+	                    text: '预警发布数量'
+	                },
+	                stackLabels: {
+	                    enabled: true,
+	                    style: {
+	                        fontWeight: 'bold',
+	                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+	                    }
+	                }
+	            },
+	
+	            tooltip: {
+	                formatter: function () {
+	                    return '<b style="color: #0C0C0C">' + this.x + '</b><br/>' +
+	                            this.series.name + ': ' + this.y + '<br/>' +
+	                            '总量: ' + this.point.stackTotal;
+	
+	                }
+	            },
+	            plotOptions: {
+	                column: {
+	                    stacking: 'normal',
+	                    dataLabels: {
+	//                        enabled: true,
+	                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+	                        style: {
+	//                            textShadow: '0 0 3px black'
+	
+	                        }
+	                    }
+	                }
+	            },
+	            series: [{
+	                name: ' ',
+	                data: releaseCountArray,
+	                //data: [102, 140, 211, 119, 115, 109, 145, 152, 124, 121, 169, 115],
+	                color: 'yellow'
+	            }]
+	        });
+	    
+	        /**
+	         *@author yuancb
+	         *@note 预警灾种事件排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getDisaranking.do",
+	            success: function (data) {
+	                var globleDisaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>预警类型</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleDisaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertDisaRankHot").html(globleDisaHot);
+	                    $("#alertDisaRankHot span:eq(0)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(1)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警事件出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警区划排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getArearanking.do",
+	            success: function (data) {
+	                var globleAreaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>地区</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleAreaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertAreaRankHot").html(globleAreaHot);
+	                    $("#alertAreaRankHot span:eq(0)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(1)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警区划出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警总数
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYearCount.do",
+	            success: function (data) {
+	                $("#eachGroupPubCount").text("年发布总数:");
+	                $("#curYearPublicCount").text(data);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警总数出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 全年预警预警
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYear.do",
+	            success: function (data) {
+	                var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        if (value.monitorName != null) {
+	                            //alert(value.monitorName);
+	                            var imgFlag = "";
+	                            var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                            for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                    imgFlag = Global.monitor.yjxh[j].flag;
+	                                    break;
+	                                }
+	                            }
+	                            for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                    imgUrl = Global.monitor.imgUrl[j].value;
+	                                    break;
+	                                }
+	                            }
+	                            globleAllYeayAlertInfo += "<img src='../" + imgUrl + "'>" +
+	                                    "<div class='ssyjxx center-block'>" +
+	                                    "<div>" +
+	                                    "<a href=''>" + value.monitorName + "</a>" +
+	                                    "</div>" +
+	                                    "</div>";
+	                        }
+	                    });
+	                }
+	                $("#allYearAlertInfo").html(globleAllYeayAlertInfo);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警年预警信息出错！');
+	            }
+	        });
+        
+        })
+        
+        /**
+        *@author yuancb
+        *@note 按季度统计评估
+        *@time 2017-8-18
+        */
+		quaterMonitorAndAssess.addEventListener('click',function(){
+			landscapeMonitorAndAssessByQuarter();
+	    	hightTemperatureListByQuarter();
+	    	orgPieChartByQuarter();
+	    	alertAreaPeiChartByQuarter();
+	    	alertLevelPeiChartByQuarter();
+	    	alertDisasterPeiChartByQuarter();
+	    	alertMapEachMonthByQuarter();
+	        /**
+	         *@author yuancb
+	         *@note 本季度预警预警
+	         *
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentQuarter.do",
+	            success: function (data) {
+	                var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        if (value.monitorName != null) {
+	                            //alert(value.monitorName);
+	                            var imgFlag = "";
+	                            var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                            for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                    imgFlag = Global.monitor.yjxh[j].flag;
+	                                    break;
+	                                }
+	                            }
+	                            for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                    imgUrl = Global.monitor.imgUrl[j].value;
+	                                    break;
+	                                }
+	                            }
+	                            globleAllYeayAlertInfo += "<img src='../" + imgUrl + "'>" +
+	                                    "<div class='ssyjxx center-block'>" +
+	                                    "<div>" +
+	                                    "<a href=''>" + value.monitorName + "</a>" +
+	                                    "</div>" +
+	                                    "</div>";
+	                        }
+	                    });
+	                }
+	                $("#allQuarterAlertInfo").html(globleAllYeayAlertInfo);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警季度预警出错！');
+	            }
+	        });
+		
+			/**
+	         *@author yuancb
+	         *@note 预警发布手段次数统计
+	         *@time 2017-08-04
+	         */
+	        var releaseCountArray = [];
+	        var releaseNameArray = [];
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMethodrankingByQuarter.do",
+	            success: function (data) {
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        releaseNameArray[index] = value.monitorName;
+	                        releaseCountArray[index] = value.monitorCount;
+	                    });
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警发布手段次数出错！');
+	            }
+	        });
+	        /**
+	         *@note 预警次数统计
+	         *@time 2017-08-04
+	         */
+	        $('#container-1').highcharts({
+	            chart: {
+	                type: 'column'
+	            },
+	            title: {
+	                text: '预警次数统计'
+	            },
+	            xAxis: {
+	                categories: releaseNameArray
+	                /**categories: [
+	                 '手机APP',
+	                 '12379微信',
+	                 '12379网站',
+	                 '预警短信',
+	                 '应急广播',
+	                 '微博',
+	                 '电视插播',
+	                 '电子显示屏',
+	                 '电台广播',
+	                 '邮件发布',
+	                 '传真发布',
+	                 '预警收音机'
+	                 ]*/
+	            },
+	            yAxis: {
+	                min: 0,
+	                title: {
+	                    text: '预警发布数量'
+	                },
+	                stackLabels: {
+	                    enabled: true,
+	                    style: {
+	                        fontWeight: 'bold',
+	                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+	                    }
+	                }
+	            },
+	
+	            tooltip: {
+	                formatter: function () {
+	                    return '<b style="color: #0C0C0C">' + this.x + '</b><br/>' +
+	                            this.series.name + ': ' + this.y + '<br/>' +
+	                            '总量: ' + this.point.stackTotal;
+	
+	                }
+	            },
+	            plotOptions: {
+	                column: {
+	                    stacking: 'normal',
+	                    dataLabels: {
+	//                        enabled: true,
+	                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+	                        style: {
+	//                            textShadow: '0 0 3px black'
+	
+	                        }
+	                    }
+	                }
+	            },
+	            series: [{
+	                name: ' ',
+	                data: releaseCountArray,
+	                //data: [102, 140, 211, 119, 115, 109, 145, 152, 124, 121, 169, 115],
+	                color: 'yellow'
+	            }]
+	        });
+	    
+	        /**
+	         *@author yuancb
+	         *@note 预警灾种事件排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getDisarankingByQuarter.do",
+	            success: function (data) {
+	                var globleDisaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>预警类型</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleDisaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertDisaRankHot").html(globleDisaHot);
+	                    $("#alertDisaRankHot span:eq(0)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(1)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警事件出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警区划排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getArearankingByQuarter.do",
+	            success: function (data) {
+	                var globleAreaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>地区</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleAreaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertAreaRankHot").html(globleAreaHot);
+	                    $("#alertAreaRankHot span:eq(0)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(1)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警区划出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警总数
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYearCountByQuarter.do",
+	            success: function (data) {
+	                $("#eachGroupPubCount").text("本季度发布总数:");
+	                $("#curYearPublicCount").text(data);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警总数出错！');
+	            }
+	        });
+		
+		},false);
+		/**
+        *@author yuancb
+        *@note 按月份统计评估
+        *@time 2017-8-18
+        */
+		monthMonitorAndAssess.addEventListener('click',function(){
+			landscapeMonitorAndAssessByMonth();
+	    	hightTemperatureListByMonth();
+	    	orgPieChartByMonth();
+	    	alertAreaPeiChartByMonth();
+	    	alertLevelPeiChartByMonth();
+	    	alertDisasterPeiChartByMonth();
+	    	alertMapEachMonthByMonth();
+	        /**
+	         *@author yuancb
+	         *@note 本月预警预警
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentMonth.do",
+	            success: function (data) {
+	                var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        if (value.monitorName != null) {
+	                            //alert(value.monitorName);
+	                            var imgFlag = "";
+	                            var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                            for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                    imgFlag = Global.monitor.yjxh[j].flag;
+	                                    break;
+	                                }
+	                            }
+	                            for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                    imgUrl = Global.monitor.imgUrl[j].value;
+	                                    break;
+	                                }
+	                            }
+	                            globleAllYeayAlertInfo += "<img src='../" + imgUrl + "'>" +
+	                                    "<div class='ssyjxx center-block'>" +
+	                                    "<div>" +
+	                                    "<a href=''>" + value.monitorName + "</a>" +
+	                                    "</div>" +
+	                                    "</div>";
+	                        }
+	                    });
+	                }
+	                $("#allMonthAlertInfo").html(globleAllYeayAlertInfo);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警本月预警信息出错！');
+	            }
+	        });
+	        
+	        /**
+	         *@author yuancb
+	         *@note 预警发布手段次数统计
+	         *@time 2017-08-04
+	         */
+	        var releaseCountArray = [];
+	        var releaseNameArray = [];
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMethodrankingByMonth.do",
+	            success: function (data) {
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        releaseNameArray[index] = value.monitorName;
+	                        releaseCountArray[index] = value.monitorCount;
+	                    });
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警发布手段次数出错！');
+	            }
+	        });
+	        /**
+	         *@note 预警次数统计
+	         *@time 2017-08-04
+	         */
+	        $('#container-1').highcharts({
+	            chart: {
+	                type: 'column'
+	            },
+	            title: {
+	                text: '预警次数统计'
+	            },
+	            xAxis: {
+	                categories: releaseNameArray
+	                /**categories: [
+	                 '手机APP',
+	                 '12379微信',
+	                 '12379网站',
+	                 '预警短信',
+	                 '应急广播',
+	                 '微博',
+	                 '电视插播',
+	                 '电子显示屏',
+	                 '电台广播',
+	                 '邮件发布',
+	                 '传真发布',
+	                 '预警收音机'
+	                 ]*/
+	            },
+	            yAxis: {
+	                min: 0,
+	                title: {
+	                    text: '预警发布数量'
+	                },
+	                stackLabels: {
+	                    enabled: true,
+	                    style: {
+	                        fontWeight: 'bold',
+	                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+	                    }
+	                }
+	            },
+	
+	            tooltip: {
+	                formatter: function () {
+	                    return '<b style="color: #0C0C0C">' + this.x + '</b><br/>' +
+	                            this.series.name + ': ' + this.y + '<br/>' +
+	                            '总量: ' + this.point.stackTotal;
+	
+	                }
+	            },
+	            plotOptions: {
+	                column: {
+	                    stacking: 'normal',
+	                    dataLabels: {
+	//                        enabled: true,
+	                        color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+	                        style: {
+	//                            textShadow: '0 0 3px black'
+	
+	                        }
+	                    }
+	                }
+	            },
+	            series: [{
+	                name: ' ',
+	                data: releaseCountArray,
+	                //data: [102, 140, 211, 119, 115, 109, 145, 152, 124, 121, 169, 115],
+	                color: 'yellow'
+	            }]
+	        });
+	    
+	        /**
+	         *@author yuancb
+	         *@note 预警灾种事件排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getDisarankingByMonth.do",
+	            success: function (data) {
+	                var globleDisaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>预警类型</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleDisaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertDisaRankHot").html(globleDisaHot);
+	                    $("#alertDisaRankHot span:eq(0)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(1)").addClass("span");
+	                    $("#alertDisaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警事件出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警区划排行
+	         *@time 2017-08-03
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getArearankingByMonth.do",
+	            success: function (data) {
+	                var globleAreaHot = "<tr class='tit'>" +
+	                        "<th class='t1'>序号</th>" +
+	                        "<th class='t2'>地区</th>" +
+	                        "<th class='t3'>数量</th>" +
+	                        "</tr>";
+	                if (data != null && data != "") {
+	                    $.each(data, function (index, value) {
+	                        globleAreaHot += "<tr>" +
+	                                "<td class='t1'><span>" + (index + 1) + "</span></td>" +
+	                                "<td class='t2'>" + value.monitorName + "</td>" +
+	                                "<td class='t3'>" + value.monitorCount + "</td>" +
+	                                "</tr>";
+	                    });
+	                    $("#alertAreaRankHot").html(globleAreaHot);
+	                    $("#alertAreaRankHot span:eq(0)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(1)").addClass("span");
+	                    $("#alertAreaRankHot span:eq(2)").addClass("span");
+	                }
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警区划出错！');
+	            }
+	        });
+	
+	        /**
+	         *@author yuancb
+	         *@note 预警总数
+	         *@time 2017-08-05
+	         */
+	        $.ajax({
+	            async: false,
+	            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertCurrentYearCountByMonth.do",
+	            success: function (data) {
+	                $("#eachGroupPubCount").text("本月发布总数:");
+	                $("#curYearPublicCount").text(data);
+	            },
+	            error: function (xhr) {
+	                console.log('加载预警总数出错！');
+	            }
+	        });
+	        
+        },false);
+    });
+
+</script>
+<body>
+<div id="bg-map">
+    <div class="center-block bg-map-con">
+        <h1 style="font-size: 22px;color: #fff">内蒙古预警信息发布中心</h1>
+        <h4><span id="eachGroupPubCount"></span><span id="curYearPublicCount"></span></h4>
+
+        <!--内蒙古预警信息发布中心-->
+        <div class="chart_con pull-left">
+            <!-- Nav tabs -->
+            <ul class="nav navbar-nav" role="tablist">
+                <li role="presentation" class="active" id="yearMonitorAndAssess">
+                    <a href="#all" aria-controls="all" role="tab" data-toggle="tab">
+                        年
+                    </a>
+                </li>
+                <li role="presentation" id="quaterMonitorAndAssess">
+                    <a href="#week" aria-controls="week" role="tab" data-toggle="tab">
+                        季
+                    </a>
+                </li>
+                <li role="presentation" id="monthMonitorAndAssess">
+                    <a href="#today" aria-controls="today" role="tab" data-toggle="tab">
+                        月
+                    </a>
+                </li>
+
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="all">
+                    <div>
+                        <div class="img" id="allYearAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="week">
+                    <div>
+                        <div class="img" id="allQuarterAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="today">
+                    <div>
+                        <div class="img" id="allMonthAlertInfo">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--内蒙古预警信息发布中心结束-->
+
+        <!--柱状图和top开始-->
+        <div class="view_chart_con">
+            <!--柱状图-->
+            <div class="view_chart0">
+                <div class="container-1">
+                    <div id="container-1"></div>
+                </div>
+            </div>
+            <!--柱状图结束-->
+
+            <!--top-->
+            <div class="view_chart1">
+                <div class="top-area">
+                    <span class="top-tit center-block">地区排行top10</span>
+                    <table id="alertAreaRankHot">
+
+                    </table>
+
+                </div>
+                <div class="top-info">
+                    <span class="top-tit center-block">预警排行top10</span>
+                    <table id="alertDisaRankHot">
+
+                    </table>
+                </div>
+
+            </div>
+            <!--top结束-->
+        </div>
+        <!--柱状图和top结束-->
+
+        <!--环形图开始-->
+        <div class="ring pull-right">
+            <div class="view_chart">
+                <div class="container1-1">
+                    <!--<span class="titt center-block">预警信息统计</span>-->
+                    <div id="secondPieChart11" style="width: 400px;height: 260px"></div>
+                    <script>
+                    function alertLevelPeiChartByYear(){
+                        var myChart11 = echarts.init(document.getElementById('secondPieChart11'));
+                        /**
+                         *@author yuancb
+                         *@note 预警级别饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertLevelPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertLevelPeiChart.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertLevelPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警级别百分比出错！');
+                            }
+                        });
+                        // 显示标题，图例和空的坐标轴
+                        option = {
+                            title: {
+                                text: '预警级别',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertLevelPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接'},
+                                 {value: 310, name: '邮件'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 148, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart11.setOption(option);
+                    
+                    }
+                    function alertLevelPeiChartByQuarter(){
+                        var myChart11 = echarts.init(document.getElementById('secondPieChart11'));
+                        /**
+                         *@author yuancb
+                         *@note 预警级别饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertLevelPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertLevelPeiChartByQuarter.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertLevelPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警级别百分比出错！');
+                            }
+                        });
+                        // 显示标题，图例和空的坐标轴
+                        option = {
+                            title: {
+                                text: '预警级别',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertLevelPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接'},
+                                 {value: 310, name: '邮件'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 148, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart11.setOption(option);
+                    
+                    }
+                    function alertLevelPeiChartByMonth(){
+                        var myChart11 = echarts.init(document.getElementById('secondPieChart11'));
+                        /**
+                         *@author yuancb
+                         *@note 预警级别饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertLevelPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertLevelPeiChartByMonth.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertLevelPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警级别百分比出错！');
+                            }
+                        });
+                        // 显示标题，图例和空的坐标轴
+                        option = {
+                            title: {
+                                text: '预警级别',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertLevelPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接'},
+                                 {value: 310, name: '邮件'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 148, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart11.setOption(option);
+                    
+                    }
+                    </script>
+
+                </div>
+                <div class="container1-2">
+                    <!--<span class="titt center-block">发布途径统计</span>-->
+                    <div id="secondPieChart12" style="width: 400px;height: 260px"></div>
+                    <script>
+                    function orgPieChartByYear(){
+                        var myChart12 = echarts.init(document.getElementById('secondPieChart12'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警行业预警饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertOrgPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertOrgPeiChart.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertOrgPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载行业单位发布预警数据出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行业单位',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],           
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertOrgPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart12.setOption(option);
+                    }
+                    function orgPieChartByQuarter(){
+                        var myChart12 = echarts.init(document.getElementById('secondPieChart12'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警行业预警饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertOrgPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertOrgPeiChartByQuarter.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertOrgPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载行业单位发布预警数据出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行业单位',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],           
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertOrgPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart12.setOption(option);
+                    }
+                    function orgPieChartByMonth(){
+                        var myChart12 = echarts.init(document.getElementById('secondPieChart12'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警行业预警饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertOrgPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertOrgPeiChartByMonth.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertOrgPeiChartArrry = objArray;
+                                $.each(objArray, function (index, value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载行业单位发布预警数据出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行业单位',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],           
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertOrgPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart12.setOption(option);
+                    }
+                    </script>
+                </div>
+            </div>
+            <div class="view_chart ring2">
+                <div class="container2-1">
+                    <!--<span class="titt center-block">预警信息统计</span>-->
+                    <div id="secondPieChart" style="width: 400px;height: 260px"></div>
+                    <script>
+					function alertAreaPeiChartByYear(){
+                        var myChart2 = echarts.init(document.getElementById('secondPieChart'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警区划饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertAreaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertAreaPeiChart.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertAreaPeiChartArrry = objArray;
+                                $.each(objArray, function (index,value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警区划百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行政区划',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],     
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertAreaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart2.setOption(option);
+					}
+					function alertAreaPeiChartByQuarter(){
+                        var myChart2 = echarts.init(document.getElementById('secondPieChart'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警区划饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertAreaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertAreaPeiChartByQuarter.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertAreaPeiChartArrry = objArray;
+                                $.each(objArray, function (index,value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警区划百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行政区划',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],     
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertAreaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart2.setOption(option);
+					}
+					function alertAreaPeiChartByMonth(){
+                        var myChart2 = echarts.init(document.getElementById('secondPieChart'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警区划饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertAreaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertAreaPeiChartByMonth.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                alertAreaPeiChartArrry = objArray;
+                                $.each(objArray, function (index,value) {
+                                    alertLevelNamePeiChartArrry[index] = value.monitorName;
+                                })
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警区划百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '行政区划',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            //color: ['#ff7d27', 'yellow', '#fcc36e', '#57a2fd', "greenyellow"],//饼图颜色
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%', '70%'],     
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertAreaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart2.setOption(option);
+					}
+                    </script>
+                </div>
+                <div class="container2-2">
+                    <!--<span class="titt center-block">发布途径统计</span>-->
+                    <div id="secondPieChart1" style="width: 400px;height: 260px"></div>
+                    <script>
+                    function alertDisasterPeiChartByYear(){
+                        var myChart21 = echarts.init(document.getElementById('secondPieChart1'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警事件饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertDisaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertDisaPeiChart.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                $.each(objArray, function (index, value) {
+                                    if (value.name.indexOf("事件")) {
+                                        var str = value.name;
+                                        value.name = str.replace("事件", "");
+                                        alertLevelNamePeiChartArrry[index] = str.replace("事件", "");
+                                    }
+                                })
+                                alertDisaPeiChartArrry = objArray;
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警事件百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '灾害类型',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%','70%'],         
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertDisaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart21.setOption(option);
+                    
+                    }
+                    function alertDisasterPeiChartByQuarter(){
+                        var myChart21 = echarts.init(document.getElementById('secondPieChart1'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警事件饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertDisaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertDisaPeiChartByQuarter.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                $.each(objArray, function (index, value) {
+                                    if (value.name.indexOf("事件")) {
+                                        var str = value.name;
+                                        value.name = str.replace("事件", "");
+                                        alertLevelNamePeiChartArrry[index] = str.replace("事件", "");
+                                    }
+                                })
+                                alertDisaPeiChartArrry = objArray;
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警事件百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '灾害类型',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%','70%'],         
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertDisaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart21.setOption(option);
+                    
+                    }
+                    function alertDisasterPeiChartByMonth(){
+                        var myChart21 = echarts.init(document.getElementById('secondPieChart1'));
+                        // 显示标题，图例和空的坐标轴
+                        /**
+                         *@author yuancb
+                         *@note 预警事件饼状图
+                         *@time 2017-08-04
+                         */
+                        var alertDisaPeiChartArrry = [];
+                        var alertLevelNamePeiChartArrry = [];
+                        $.ajax({
+                            async: false,
+                            url: Global.common.ajaxPath + "/monitorAndAssess/getAlertDisaPeiChartByMonth.do",
+                            success: function (data) {
+                                var objArray = eval("(" + data + ")");
+                                $.each(objArray, function (index, value) {
+                                    if (value.name.indexOf("事件")) {
+                                        var str = value.name;
+                                        value.name = str.replace("事件", "");
+                                        alertLevelNamePeiChartArrry[index] = str.replace("事件", "");
+                                    }
+                                })
+                                alertDisaPeiChartArrry = objArray;
+                            },
+                            error: function (xhr) {
+                                console.log('加载预警事件百分比出错！');
+                            }
+                        });
+
+                        option = {
+                            title: {
+                                text: '灾害类型',
+                                textStyle: {
+                                    color: '#fff',
+                                    fontSize: 14
+
+                                },
+                                y: 'center',
+                                x: 'center',
+                            },
+                            color: ['#E45448', 'orange', 'yellow', '#56C5FF'],//饼图颜色
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c} ({d}%)"
+                            },
+                            legend: {
+                                show: false,
+                                orient: 'vertical',
+                                x: 'left',
+                                data: alertLevelNamePeiChartArrry
+                                //data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索vgucyrdufyu引擎']
+                            },
+                            calculable: false,
+                            series: [{
+                                name: '发布排行',
+                                type: 'pie',
+                                radius: ['50%','70%'],         
+                                itemStyle: {
+                                    normal: {
+                                        label: {
+                                            show: true,
+                                            formatter: "{b}:\n{d}%",
+                                            width: 2,
+                                        },
+
+                                        labelLine: {
+                                            show: false
+                                        }
+                                    },
+
+                                },
+                                data: alertDisaPeiChartArrry
+                                /**data: [
+                                 {value: 335, name: '直接111111访问'},
+                                 {value: 310, name: '邮件营销'},
+                                 {value: 234, name: '联盟广告'},
+                                 {value: 135, name: '视频广告'},
+                                 {value: 1548, name: '搜索引擎'}
+                                 ]*/
+                            }
+                            ]
+                        }
+
+                        myChart21.setOption(option);
+                    
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+        <!--环形图结束-->
+
+        <!--地图开始-->
+        <div class="map">
+            <div id="main1" style="width: 260px;height: 260px"></div>
+            <script>
+           
+                var myChart1 = echarts.init(document.getElementById('main1'));
+                /**
+                 *@author yuancb
+                 *@note 预警发布雷达
+                 *@time 2017-08-05
+                 */
+                var MonitorAssessRadarArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                $.ajax({
+                    async: false,
+                    url: Global.common.ajaxPath + "/monitorAndAssess/getAlertByEachMonth.do",
+                    success: function (data) {
+                        $.each(data, function (index, value) {
+                            if (value.monitorName == "1") {
+                                MonitorAssessRadarArray[0] = value.monitorPercentage;
+                            } else if (value.monitorName == "2") {
+                                MonitorAssessRadarArray[1] = value.monitorPercentage;
+                            } else if (value.monitorName == "3") {
+                                MonitorAssessRadarArray[2] = value.monitorPercentage;
+                            } else if (value.monitorName == "4") {
+                                MonitorAssessRadarArray[3] = value.monitorPercentage;
+                            } else if (value.monitorName == "5") {
+                                MonitorAssessRadarArray[4] = value.monitorPercentage;
+                            } else if (value.monitorName == "6") {
+                                MonitorAssessRadarArray[5] = value.monitorPercentage;
+                            } else if (value.monitorName == "7") {
+                                MonitorAssessRadarArray[6] = value.monitorPercentage;
+                            } else if (value.monitorName == "8") {
+                                MonitorAssessRadarArray[7] = value.monitorPercentage;
+                            } else if (value.monitorName == "9") {
+                                MonitorAssessRadarArray[8] = value.monitorPercentage;
+                            } else if (value.monitorName == "10") {
+                                MonitorAssessRadarArray[9] = value.monitorPercentage;
+                            } else if (value.monitorName == "11") {
+                                MonitorAssessRadarArray[10] = value.monitorPercentage;
+                            } else if (value.monitorName == "12") {
+                                MonitorAssessRadarArray[11] = value.monitorPercentage;
+                            }
+                        })
+                    },
+                    error: function (xhr) {
+                        console.log('加载预警地图数据出错！');
+                    }
+                });
+
+                option = {
+
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+//                legend: {
+//                    x: 'center',
+//                    data:['降水量','蒸发量']
+//                },
+//                legend: {
+//                    x: 'center',
+//                    data:['预警量']
+//                },
+                    radar: [
+
+                        {
+                            indicator: (function () {
+                                var res = [];
+                                for (var i = 1; i <= 12; i++) {
+                                    res.push({text: i + '月', max: 100});
+                                }
+                                return res;
+                            })(),
+                            center: ['45%', '60%'],
+                            radius: 80
+                        }
+                    ],
+                    series: [
+                        {
+                            type: 'radar',
+                            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                            data: [
+                                {
+                                    name: '预警量',
+                                    value: MonitorAssessRadarArray,
+                                    //value: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 75.6, 82.2, 48.7, 18.8, 6.0, 2.3],
+                                },
+                                //{
+                                //   name: '蒸发量',
+                                //    value: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 35.6, 62.2, 32.6, 20.0, 6.4, 3.3]
+                                //}
+                            ]
+                        }
+                    ]
+                };
+                myChart1.setOption(option);
+            </script>
+            <div id="main"></div>
+            <script type="text/javascript">
+                //function(省份拼音+Json)
+            function alertMapEachMonthByYear(){
+                $.get('neimenggu.json', function (neimengguJson) {
+
+                    echarts.registerMap('内蒙古', neimengguJson);
+                    var chart = echarts.init(document.getElementById('main'));
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)
+                                });
+                            }
+                        }
+                        return res;
+                    };
+                    var geoCoordMap = {
+                        "鄂尔多斯": [109.781327, 39.608266],
+                        "赤峰市": [118.87, 42.98],
+                        "呼伦贝尔": [119.9, 49.25],
+                        "兴安盟": [122.05, 46.08],
+                        "阿拉善盟": [104.05, 40.43],
+                        "通辽市": [121.53, 44.07],
+                        "锡林郭勒盟": [115.37, 44.02],
+                        "包头市": [110.13, 42.23],
+                        "巴彦淖尔市": [107, 41.4],
+                        "乌兰察布市": [112.28, 41.53],
+                        "呼和浩特市": [111.57, 40.35],
+                        "乌海市": [106.8, 39.8]
+
+
+                    };
+                    /**
+                     *@author yuancb
+                     *@note 预警发布地图Map
+                     *@time 2017-08-05
+                     */
+                    var MonitorAssessMapArray = [];
+                    $.ajax({
+                        async: false,
+                        url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMonitorAssessMap.do",
+                        success: function (data) {
+                            var objArray = eval("(" + data + ")");
+                            MonitorAssessMapArray = objArray;
+                        },
+                        error: function (xhr) {
+                            console.log('加载预警地图数据出错！');
+                        }
+                    });
+
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{b}'
+                        },
+                        series: [{
+                            roam: true,
+                            type: 'map',
+                            map: '内蒙古',
+
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF'
+                                },
+
+                            }
+                        }],
+
+                        geo: {
+                            roam: true,
+                            map: '内蒙古',
+                            label: {
+                                emphasis: {
+                                    show: false
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF',
+
+                                },
+                                emphasis: {
+                                    areaColor: '#2a333d'
+                                }
+                            }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: 500,
+                            orient: 'horizontal',
+                            calculable: true,
+                            right: '30px',
+                            bottom: '100px',
+                            align: 'right',
+                            inRange: {
+                                color: ['#50a3ba', '#eac736', '#d94e5d']
+
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+
+//                    backgroundColor: '#003',
+
+                        title: {
+//                        text: 'World Flights',
+                            left: 'center',
+                            textStyle: {
+                                color: '#eee'
+                            }
+                        },
+                        series: [
+                            {
+                                name: 'pm2.5',
+                                type: 'scatter',
+                                coordinateSystem: 'geo',
+                                data: convertData(MonitorAssessMapArray),
+                                /**data: convertData([
+                                 {name: "鄂尔多斯", value: 12},
+                                 {name: "赤峰", value: 16},
+                                 {name: "呼伦贝尔", value: 46},
+                                 {name: "兴安盟", value: 56},
+                                 {name: "阿拉善盟", value: 76},
+                                 {name: "通辽市", value: 26},
+                                 {name: "锡林郭勒盟", value: 36},
+                                 {name: "包头市", value: 86},
+                                 {name: "巴彦淖尔市", value: 96},
+                                 {name: "乌兰察布市", value: 66},
+                                 {name: "呼和浩特市", value: 126},
+                                 {name: "乌海市", value: 146},
+
+
+                                 ]),*/
+                                symbolSize: 30,
+                                label: {
+                                    normal: {
+                                        show: true
+                                    },
+                                    emphasis: {
+                                        show: true
+                                    }
+                                },
+                                itemStyle: {
+                                    emphasis: {
+                                        borderColor: '#fff',
+                                        borderWidth: 1
+                                    }
+                                }
+                            }
+                        ]
+
+                    });
+
+                });
+            }
+            function alertMapEachMonthByQuarter(){
+                $.get('neimenggu.json', function (neimengguJson) {
+
+                    echarts.registerMap('内蒙古', neimengguJson);
+                    var chart = echarts.init(document.getElementById('main'));
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)
+                                });
+                            }
+                        }
+                        return res;
+                    };
+                    var geoCoordMap = {
+                        "鄂尔多斯": [109.781327, 39.608266],
+                        "赤峰市": [118.87, 42.98],
+                        "呼伦贝尔": [119.9, 49.25],
+                        "兴安盟": [122.05, 46.08],
+                        "阿拉善盟": [104.05, 40.43],
+                        "通辽市": [121.53, 44.07],
+                        "锡林郭勒盟": [115.37, 44.02],
+                        "包头市": [110.13, 42.23],
+                        "巴彦淖尔市": [107, 41.4],
+                        "乌兰察布市": [112.28, 41.53],
+                        "呼和浩特市": [111.57, 40.35],
+                        "乌海市": [106.8, 39.8]
+
+
+                    };
+                    /**
+                     *@author yuancb
+                     *@note 预警发布地图Map
+                     *@time 2017-08-05
+                     */
+                    var MonitorAssessMapArray = [];
+                    $.ajax({
+                        async: false,
+                        url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMonitorAssessMapByQuarter.do",
+                        success: function (data) {
+                            var objArray = eval("(" + data + ")");
+                            MonitorAssessMapArray = objArray;
+                        },
+                        error: function (xhr) {
+                            console.log('加载预警地图数据出错！');
+                        }
+                    });
+
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{b}'
+                        },
+                        series: [{
+                            roam: true,
+                            type: 'map',
+                            map: '内蒙古',
+
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF'
+                                },
+
+                            }
+                        }],
+
+                        geo: {
+                            roam: true,
+                            map: '内蒙古',
+                            label: {
+                                emphasis: {
+                                    show: false
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF',
+
+                                },
+                                emphasis: {
+                                    areaColor: '#2a333d'
+                                }
+                            }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: 500,
+                            orient: 'horizontal',
+                            calculable: true,
+                            right: '30px',
+                            bottom: '100px',
+                            align: 'right',
+                            inRange: {
+                                color: ['#50a3ba', '#eac736', '#d94e5d']
+
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+
+//                    backgroundColor: '#003',
+
+                        title: {
+//                        text: 'World Flights',
+                            left: 'center',
+                            textStyle: {
+                                color: '#eee'
+                            }
+                        },
+                        series: [
+                            {
+                                name: 'pm2.5',
+                                type: 'scatter',
+                                coordinateSystem: 'geo',
+                                data: convertData(MonitorAssessMapArray),
+                                /**data: convertData([
+                                 {name: "鄂尔多斯", value: 12},
+                                 {name: "赤峰", value: 16},
+                                 {name: "呼伦贝尔", value: 46},
+                                 {name: "兴安盟", value: 56},
+                                 {name: "阿拉善盟", value: 76},
+                                 {name: "通辽市", value: 26},
+                                 {name: "锡林郭勒盟", value: 36},
+                                 {name: "包头市", value: 86},
+                                 {name: "巴彦淖尔市", value: 96},
+                                 {name: "乌兰察布市", value: 66},
+                                 {name: "呼和浩特市", value: 126},
+                                 {name: "乌海市", value: 146},
+
+
+                                 ]),*/
+                                symbolSize: 30,
+                                label: {
+                                    normal: {
+                                        show: true
+                                    },
+                                    emphasis: {
+                                        show: true
+                                    }
+                                },
+                                itemStyle: {
+                                    emphasis: {
+                                        borderColor: '#fff',
+                                        borderWidth: 1
+                                    }
+                                }
+                            }
+                        ]
+
+                    });
+
+                });
+            }
+            function alertMapEachMonthByMonth(){
+                $.get('neimenggu.json', function (neimengguJson) {
+
+                    echarts.registerMap('内蒙古', neimengguJson);
+                    var chart = echarts.init(document.getElementById('main'));
+                    var convertData = function (data) {
+                        var res = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var geoCoord = geoCoordMap[data[i].name];
+                            if (geoCoord) {
+                                res.push({
+                                    name: data[i].name,
+                                    value: geoCoord.concat(data[i].value)
+                                });
+                            }
+                        }
+                        return res;
+                    };
+                    var geoCoordMap = {
+                        "鄂尔多斯": [109.781327, 39.608266],
+                        "赤峰市": [118.87, 42.98],
+                        "呼伦贝尔": [119.9, 49.25],
+                        "兴安盟": [122.05, 46.08],
+                        "阿拉善盟": [104.05, 40.43],
+                        "通辽市": [121.53, 44.07],
+                        "锡林郭勒盟": [115.37, 44.02],
+                        "包头市": [110.13, 42.23],
+                        "巴彦淖尔市": [107, 41.4],
+                        "乌兰察布市": [112.28, 41.53],
+                        "呼和浩特市": [111.57, 40.35],
+                        "乌海市": [106.8, 39.8]
+
+
+                    };
+                    /**
+                     *@author yuancb
+                     *@note 预警发布地图Map
+                     *@time 2017-08-05
+                     */
+                    var MonitorAssessMapArray = [];
+                    $.ajax({
+                        async: false,
+                        url: Global.common.ajaxPath + "/monitorAndAssess/getAlertMonitorAssessMapByMonth.do",
+                        success: function (data) {
+                            var objArray = eval("(" + data + ")");
+                            MonitorAssessMapArray = objArray;
+                        },
+                        error: function (xhr) {
+                            console.log('加载预警地图数据出错！');
+                        }
+                    });
+
+                    chart.setOption({
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{b}'
+                        },
+                        series: [{
+                            roam: true,
+                            type: 'map',
+                            map: '内蒙古',
+
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF'
+                                },
+
+                            }
+                        }],
+
+                        geo: {
+                            roam: true,
+                            map: '内蒙古',
+                            label: {
+                                emphasis: {
+                                    show: false
+                                }
+                            },
+                            itemStyle: {
+                                normal: {
+                                    areaColor: '#2664b8',
+                                    borderColor: '#95F1FF',
+
+                                },
+                                emphasis: {
+                                    areaColor: '#2a333d'
+                                }
+                            }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: 500,
+                            orient: 'horizontal',
+                            calculable: true,
+                            right: '30px',
+                            bottom: '100px',
+                            align: 'right',
+                            inRange: {
+                                color: ['#50a3ba', '#eac736', '#d94e5d']
+
+                            },
+                            textStyle: {
+                                color: '#fff'
+                            }
+                        },
+
+//                    backgroundColor: '#003',
+
+                        title: {
+//                        text: 'World Flights',
+                            left: 'center',
+                            textStyle: {
+                                color: '#eee'
+                            }
+                        },
+                        series: [
+                            {
+                                name: 'pm2.5',
+                                type: 'scatter',
+                                coordinateSystem: 'geo',
+                                data: convertData(MonitorAssessMapArray),
+                                /**data: convertData([
+                                 {name: "鄂尔多斯", value: 12},
+                                 {name: "赤峰", value: 16},
+                                 {name: "呼伦贝尔", value: 46},
+                                 {name: "兴安盟", value: 56},
+                                 {name: "阿拉善盟", value: 76},
+                                 {name: "通辽市", value: 26},
+                                 {name: "锡林郭勒盟", value: 36},
+                                 {name: "包头市", value: 86},
+                                 {name: "巴彦淖尔市", value: 96},
+                                 {name: "乌兰察布市", value: 66},
+                                 {name: "呼和浩特市", value: 126},
+                                 {name: "乌海市", value: 146},
+
+
+                                 ]),*/
+                                symbolSize: 30,
+                                label: {
+                                    normal: {
+                                        show: true
+                                    },
+                                    emphasis: {
+                                        show: true
+                                    }
+                                },
+                                itemStyle: {
+                                    emphasis: {
+                                        borderColor: '#fff',
+                                        borderWidth: 1
+                                    }
+                                }
+                            }
+                        ]
+
+                    });
+
+                });
+            }
+            </script>
+        </div>
+        <!--地图结束-->
+
+    </div>
+</div>
+
+
+<div id="sidebar">
+    <div class="sidebar-con">
+        <!--霾地区分布横向柱状图-->
+        <div class="mai_con pull-left">
+            <div id="main2" style="min-width: 400px;height: 480px;top:-20px"></div>
+            <script>
+			function landscapeMonitorAndAssessByYear(){
+			
+                var myChart2 = echarts.init(document.getElementById('main2'));
+                /**
+                 *@author yuancb
+                 *@note 预警发布各市预警横向柱状图
+                 *@time 2017-08-05
+                 */
+                var MonitorAssessCityAlertCountArray = [];
+                var MonitorAssessCityAlertNameArray = [];
+                //alert("sddsds");
+                $.ajax({
+                    async: false,
+                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertMonitorAssess.do",
+                    success: function (data) {
+                        var objArray = eval("(" + data + ")");
+                        $.each(objArray, function (index, value) {
+                            MonitorAssessCityAlertCountArray[index] = value.value;
+                            MonitorAssessCityAlertNameArray[index] = value.name;
+                        })
+                    },
+                    error: function (xhr) {
+                        console.log('加载预警各市横向柱状图出错！');
+                    }
+                });
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    //                    legend: {
+                    //                        data: ['霾预警']
+                    //                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value'
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: MonitorAssessCityAlertNameArray
+                        /*data: [
+                         '呼和浩特',
+                         '包头',
+                         '辽通',
+                         '赤峰',
+                         '乌海',
+                         '鄂尔多斯',
+                         '呼伦贝尔',
+                         '乌兰察布',
+                         '巴彦淖尔',
+                         '兴安',
+                         '锡林郭勒',
+                         '阿拉善',
+                         '乌兰浩特',
+                         '阿尔山'
+                         ]*/
+                    },
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    series: [
+                        {
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#30A8E2', '#30A8E2', '#30A8E2', '#30A8E2',
+                                            //                                            '#27727B'
+
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    }
+                                }
+                            },
+                            name: '高温预警',
+                            type: 'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'insideRight'
+                                }
+                            },
+                            data: MonitorAssessCityAlertCountArray
+                            /*data: [30, 21, 31, 14, 29, 33, 20, 26, 24, 16, 29, 18, 28, 32]*/
+                        }
+                        
+                    ]
+                }
+                myChart2.setOption(option);
+			}
+			function landscapeMonitorAndAssessByQuarter(){
+			
+                var myChart2 = echarts.init(document.getElementById('main2'));
+                /**
+                 *@author yuancb
+                 *@note 预警发布各市预警横向柱状图
+                 *@time 2017-08-05
+                 */
+                var MonitorAssessCityAlertCountArray = [];
+                var MonitorAssessCityAlertNameArray = [];
+                //alert("sddsds");
+                $.ajax({
+                    async: false,
+                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertMonitorAssessByQuarter.do",
+                    success: function (data) {
+                        var objArray = eval("(" + data + ")");
+                        $.each(objArray, function (index, value) {
+                            MonitorAssessCityAlertCountArray[index] = value.value;
+                            MonitorAssessCityAlertNameArray[index] = value.name;
+                        })
+                    },
+                    error: function (xhr) {
+                        console.log('加载预警各市横向柱状图出错！');
+                    }
+                });
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    //                    legend: {
+                    //                        data: ['霾预警']
+                    //                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value'
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: MonitorAssessCityAlertNameArray
+                        /*data: [
+                         '呼和浩特',
+                         '包头',
+                         '辽通',
+                         '赤峰',
+                         '乌海',
+                         '鄂尔多斯',
+                         '呼伦贝尔',
+                         '乌兰察布',
+                         '巴彦淖尔',
+                         '兴安',
+                         '锡林郭勒',
+                         '阿拉善',
+                         '乌兰浩特',
+                         '阿尔山'
+                         ]*/
+                    },
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    series: [
+                        {
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#30A8E2', '#30A8E2', '#30A8E2', '#30A8E2',
+                                            //                                            '#27727B'
+
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    }
+                                }
+                            },
+                            name: '高温预警',
+                            type: 'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'insideRight'
+                                }
+                            },
+                            data: MonitorAssessCityAlertCountArray
+                            /*data: [30, 21, 31, 14, 29, 33, 20, 26, 24, 16, 29, 18, 28, 32]*/
+                        }
+                        
+                    ]
+                }
+                myChart2.setOption(option);
+			}
+			function landscapeMonitorAndAssessByMonth(){
+			
+                var myChart2 = echarts.init(document.getElementById('main2'));
+                /**
+                 *@author yuancb
+                 *@note 预警发布各市预警横向柱状图
+                 *@time 2017-08-05
+                 */
+                var MonitorAssessCityAlertCountArray = [];
+                var MonitorAssessCityAlertNameArray = [];
+                //alert("sddsds");
+                $.ajax({
+                    async: false,
+                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertMonitorAssessByMonth.do",
+                    success: function (data) {
+                        var objArray = eval("(" + data + ")");
+                        $.each(objArray, function (index, value) {
+                            MonitorAssessCityAlertCountArray[index] = value.value;
+                            MonitorAssessCityAlertNameArray[index] = value.name;
+                        })
+                    },
+                    error: function (xhr) {
+                        console.log('加载预警各市横向柱状图出错！');
+                    }
+                });
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    //                    legend: {
+                    //                        data: ['霾预警']
+                    //                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value'
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: MonitorAssessCityAlertNameArray
+                        /*data: [
+                         '呼和浩特',
+                         '包头',
+                         '辽通',
+                         '赤峰',
+                         '乌海',
+                         '鄂尔多斯',
+                         '呼伦贝尔',
+                         '乌兰察布',
+                         '巴彦淖尔',
+                         '兴安',
+                         '锡林郭勒',
+                         '阿拉善',
+                         '乌兰浩特',
+                         '阿尔山'
+                         ]*/
+                    },
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    series: [
+                        {
+                            itemStyle: {
+                                normal: {
+                                    color: function (params) {
+                                        // build a color map as your need.
+                                        var colorList = [
+                                            '#30A8E2', '#30A8E2', '#30A8E2', '#30A8E2',
+                                            //                                            '#27727B'
+
+                                        ];
+                                        return colorList[params.dataIndex]
+                                    }
+                                }
+                            },
+                            name: '高温预警',
+                            type: 'bar',
+                            stack: '总量',
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'insideRight'
+                                }
+                            },
+                            data: MonitorAssessCityAlertCountArray
+                            /*data: [30, 21, 31, 14, 29, 33, 20, 26, 24, 16, 29, 18, 28, 32]*/
+                        }
+                        
+                    ]
+                }
+                myChart2.setOption(option);
+			}
+
+            </script>
+        </div>
+        <!--霾地区分布横向柱状图结束-->
+        <!--霾雷达图-->
+        <div id="main3" style="width: 300px;height: 340px;margin-left: 60px;position: absolute;top: 560px"></div>
+        <script>
+            var myChart3 = echarts.init(document.getElementById('main3'));
+            option = {
+
+                tooltip: {
+                    trigger: 'axis'
+                },
+//                legend: {
+//                    x: 'center',
+//                    data:['降水量','蒸发量']
+//                },
+                radar: [
+
+                    {
+                        indicator: (function () {
+                            var res = [];
+                            for (var i = 1; i <= 12; i++) {
+                                res.push({text: i + '月', max: 100});
+                            }
+                            return res;
+                        })(),
+                        center: ['45%', '60%'],
+                        radius: 100
+                    }
+                ],
+                series: [
+                    {
+                        type: 'radar',
+                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                        data: [
+                            {
+                                name: '降水量',
+                                value: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 75.6, 82.2, 48.7, 18.8, 6.0, 2.3],
+                            },
+                            {
+                                name: '蒸发量',
+                                value: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 35.6, 62.2, 32.6, 20.0, 6.4, 3.3]
+                            }
+                        ]
+                    }
+                ]
+            };
+            myChart3.setOption(option);
+            //$(function () {
+	            function hightTemperatureListByYear(){
+	                /**
+	                 *@author yuancb
+	                 *@note 全年预警预警
+	                 *@time 2017-08-05
+	                 */
+	                $.ajax({
+	                    async: false,
+	                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertCurrentYear.do",
+	                    success: function (data) {
+	                        var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                        if (data != null && data != "") {
+	                            $.each(data, function (index, value) {
+	                                if (value.monitorName != null) {
+	                                    //alert(value.monitorName);
+	                                    var imgFlag = "";
+	                                    var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                                    for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                        if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                            imgFlag = Global.monitor.yjxh[j].flag;
+	                                            break;
+	                                        }
+	                                    }
+	                                    for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                        if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                            imgUrl = Global.monitor.imgUrl[j].value;
+	                                            break;
+	                                        }
+	                                    }
+	                                    globleAllYeayAlertInfo += "<div class='mai-tit center-block'>" +
+	                                            "<a href=''>" +
+	                                            "<img src='../" + imgUrl + "' alt='' class='mai-img'>" +
+	                                            "<span class='mai-tit-con'>" + value.monitorName + "</span>" +
+	                                            "<span class='mai-tit-time'>" + value.sendTime + "</span>" +
+	                                            "</a>" +
+	                                            "</div>";
+	                                }
+	                            });
+	                        }
+	                        $("#alertInfoTableList").html(globleAllYeayAlertInfo);
+	                    },
+	                    error: function (xhr) {
+	                        console.log('加载预警年预警信息出错！');
+	                    }
+	                });
+	            
+	            }
+	            function hightTemperatureListByQuarter(){
+	                /**
+	                 *@author yuancb
+	                 *@note 全年预警预警
+	                 *@time 2017-08-05
+	                 */
+	                $.ajax({
+	                    async: false,
+	                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertCurrentYearByQuarter.do",
+	                    success: function (data) {
+	                        var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                        if (data != null && data != "") {
+	                            $.each(data, function (index, value) {
+	                                if (value.monitorName != null) {
+	                                    //alert(value.monitorName);
+	                                    var imgFlag = "";
+	                                    var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                                    for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                        if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                            imgFlag = Global.monitor.yjxh[j].flag;
+	                                            break;
+	                                        }
+	                                    }
+	                                    for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                        if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                            imgUrl = Global.monitor.imgUrl[j].value;
+	                                            break;
+	                                        }
+	                                    }
+	                                    globleAllYeayAlertInfo += "<div class='mai-tit center-block'>" +
+	                                            "<a href=''>" +
+	                                            "<img src='../" + imgUrl + "' alt='' class='mai-img'>" +
+	                                            "<span class='mai-tit-con'>" + value.monitorName + "</span>" +
+	                                            "<span class='mai-tit-time'>" + value.sendTime + "</span>" +
+	                                            "</a>" +
+	                                            "</div>";
+	                                }
+	                            });
+	                        }
+	                        $("#alertInfoTableList").html(globleAllYeayAlertInfo);
+	                    },
+	                    error: function (xhr) {
+	                        console.log('加载预警年预警信息出错！');
+	                    }
+	                });
+	            
+	            }
+	            function hightTemperatureListByMonth(){
+	                /**
+	                 *@author yuancb
+	                 *@note 全年预警预警
+	                 *@time 2017-08-05
+	                 */
+	                $.ajax({
+	                    async: false,
+	                    url: Global.common.ajaxPath + "/monitorAndAssess/getHotAlertCurrentYearByMonth.do",
+	                    success: function (data) {
+	                        var globleAllYeayAlertInfo = "<span class='titt center-block'>实时预警信息</span>";
+	                        if (data != null && data != "") {
+	                            $.each(data, function (index, value) {
+	                                if (value.monitorName != null) {
+	                                    //alert(value.monitorName);
+	                                    var imgFlag = "";
+	                                    var imgUrl = "resources/images/indexMap/shachengbao_yellow.jpg";
+	                                    for (var j = 0; j < Global.monitor.yjxh.length; j++) {
+	                                        if (typeof value.monitorName == "string" && value.monitorName.indexOf(Global.monitor.yjxh[j].name) >= 0 && value.monitorName.indexOf(Global.monitor.yjxh[j].level) >= 0) {
+	                                            imgFlag = Global.monitor.yjxh[j].flag;
+	                                            break;
+	                                        }
+	                                    }
+	                                    for (var j = 0; j < Global.monitor.imgUrl.length; j++) {
+	                                        if (imgFlag == Global.monitor.imgUrl[j].name) {
+	                                            imgUrl = Global.monitor.imgUrl[j].value;
+	                                            break;
+	                                        }
+	                                    }
+	                                    globleAllYeayAlertInfo += "<div class='mai-tit center-block'>" +
+	                                            "<a href=''>" +
+	                                            "<img src='../" + imgUrl + "' alt='' class='mai-img'>" +
+	                                            "<span class='mai-tit-con'>" + value.monitorName + "</span>" +
+	                                            "<span class='mai-tit-time'>" + value.sendTime + "</span>" +
+	                                            "</a>" +
+	                                            "</div>";
+	                                }
+	                            });
+	                        }
+	                        $("#alertInfoTableList").html(globleAllYeayAlertInfo);
+	                    },
+	                    error: function (xhr) {
+	                        console.log('加载预警年预警信息出错！');
+	                    }
+	                });
+	            
+	            }
+            //})
+        </script>
+        <!--霾雷达图结束-->
+        <!--霾信息列表-->
+        <div class="mai-list">
+            <div class="mai-list-con" id="alertInfoTableList">
+                <!-- <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-hong.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">鄂尔多斯市鄂托克旗发布高温红色预警</span>
+                        <span class="mai-tit-time">2017/7/12 12:24:30</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-hong.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">阿拉善盟阿拉善右旗发布高温红色预警</span>
+                        <span class="mai-tit-time">2017/7/11 18:09:00</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-hong.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">阿拉善盟阿拉善左旗发布高温红色预警</span>
+                        <span class="mai-tit-time">2017/7/10 09:24:30</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-huang.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">鄂尔多斯市东胜区发布高温黄色预警</span>
+                        <span class="mai-tit-time">2017/7/10 11:26:30</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-hong.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">阿拉善盟额济纳旗发布高温红色预警</span>
+                        <span class="mai-tit-time">2017/7/9 14:29:40</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-hong.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">阿拉善盟发布高温红色预警</span>
+                        <span class="mai-tit-time">2017/7/8 16:56:30</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-cheng.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">呼和浩特市清水河县发布高温橙色预警</span>
+                        <span class="mai-tit-time">2017/7/8 13:24:00</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-cheng.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">呼和浩特市发布高温橙色预警</span>
+                        <span class="mai-tit-time">2017/7/7 11:10:50</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-cheng.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">巴彦淖尔市乌拉特前旗发布高温橙色预警</span>
+                        <span class="mai-tit-time">2017/7/7 9:40:35</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-cheng.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">呼和浩特市土默特左旗发布高温橙色预警</span>
+                        <span class="mai-tit-time">2017/7/6 14:16:30</span>
+                    </a>
+                </div>
+                <div class="mai-tit center-block">
+                    <a href="">
+                        <img src="../resources/img/png/gaowen-cheng.JPG" alt="" class="mai-img">
+                        <span class="mai-tit-con">巴彦淖尔市发布高温橙色预警</span>
+                        <span class="mai-tit-time">2017/7/5 11:00:40</span>
+                    </a>
+                </div> -->
+            </div>
+        </div>
+        <!--霾信息列表结束-->
+
+        <!--地图图片开始-->
+        <div class="mai-map">
+            <img src="../resources/img/nmg-map-gw.jpg" alt="">
+        </div>
+        <!--地图图片结束-->
+
+        <!--表格开始-->
+        <div class="view_chart_form">
+            <table>
+                <tr class="tit">
+                    <th class="vt1">上报时间</th>
+                    <th class="vt2">上报地区</th>
+                    <th class="vt3">受灾人数</th>
+                    <th class="vt4">灾害类型</th>
+                    <th class="vt5">经济损失</th>
+                    <th class="vt6">人员损失</th>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-08 19:36</td>
+                    <td class="vt2">呼和浩特</td>
+                    <td class="vt3">159620人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">30万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-08 18:56</td>
+                    <td class="vt2">阿拉善盟</td>
+                    <td class="vt3">9076人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">12.4万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-08 16:30</td>
+                    <td class="vt2">清水河县</td>
+                    <td class="vt3">10196人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">10.9万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-08 14:36</td>
+                    <td class="vt2">五原县</td>
+                    <td class="vt3">33760人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">20万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-08 9:16</td>
+                    <td class="vt2">额济纳旗</td>
+                    <td class="vt3">10936人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">7.5万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-08 7:10</td>
+                    <td class="vt2">包头市</td>
+                    <td class="vt3">40635人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">10.2万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-07 17:00</td>
+                    <td class="vt2">二连浩特市</td>
+                    <td class="vt3">1962人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">9万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-07 12:30</td>
+                    <td class="vt2">土默特左旗</td>
+                    <td class="vt3">40673人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">6.7万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-07 11:36</td>
+                    <td class="vt2">乌拉特中旗</td>
+                    <td class="vt3">33763人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">12万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-07 8:50</td>
+                    <td class="vt2">阿鲁科尔沁旗</td>
+                    <td class="vt3">119627人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">8万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-07 7:50</td>
+                    <td class="vt2">五原县</td>
+                    <td class="vt3">104610人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">12万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-07 7:30</td>
+                    <td class="vt2">呼和浩特</td>
+                    <td class="vt3">119627人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">20万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #5b6384">
+                    <td class="vt1">2017-08-07 6:30</td>
+                    <td class="vt2">阿鲁科尔沁旗</td>
+                    <td class="vt3">94275人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">8万</td>
+                    <td class="vt6">------</td>
+                </tr>
+                <tr style="background: #4c5475">
+                    <td class="vt1">2017-08-06 18:00</td>
+                    <td class="vt2">阿鲁科尔沁旗</td>
+                    <td class="vt3">119627人</td>
+                    <td class="vt4">高温</td>
+                    <td class="vt5">8万</td>
+                    <td class="vt6">------</td>
+                </tr>
+            </table>
+            <div class="form-bottom">
+                <ul>
+                    <li>
+                        <a href="#"> < </a>
+                    </li>
+                    <li>
+                        <a href="#">1</a>
+                    </li>
+                    <li>
+                        <a href="#">2</a>
+                    </li>
+                    <li>
+                        <a href="#">3</a>
+                    </li>
+                    <li>
+                        <a href="#">...</a>
+                    </li>
+                    <li>
+                        <a href="#">9</a>
+                    </li>
+                    <li>
+                        <a href="#"> > </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <!--表格结束-->
+
+
+    </div>
+</div>
+<div class="switch" id="sidebar_trigger">
+    <img src="../resources/img/png/zhfw-l.png" alt="">
+</div>
+<div class="switch" id="switch_close">
+    <img src="../resources/img/png/zhfw-r.png" alt="">
+</div>
+
+
+<script>
+    $('#sidebar_trigger').css('top', ($(window).height() / 2 - 50 + "px"));
+    $('#switch_close').css('top', ($(window).height() / 2 - 50 + "px"));
+    $('.mai-list').css('width', ($(window).width() / 2 - 200 + "px"));
+    $('.mai-map').css('width', ($(window).width() / 2 - 260 + "px"));
+
+    $(function () {
+        var sidebar = $('#sidebar'),//选择侧栏
+                sidebar_trigger = $('#sidebar_trigger'),
+                switch_close = $('#switch_close');
+
+        function showSideBar() {
+            sidebar.css('left', 0);
+            sidebar_trigger.css('display', 'none');
+            switch_close.css('display', 'block');
+            $('#bg-map').css('left', (-$(window).width() + "px"));
+        }
+
+        function hideSideBar() {
+            sidebar.css('left', sidebar.width());
+            switch_close.css('display', 'none');
+            sidebar_trigger.css('display', 'block');
+            $('#bg-map').css('left', 0);
+        }
+
+        sidebar_trigger.on('click', showSideBar);
+        switch_close.on('click', hideSideBar);
+    });
+
+
+</script>
+</body>
+</html>
