@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="js/echarts.min.js"></script>
+    <script src='js/jquery-2.1.4.js'></script> 
+    <script src='js/jquery-ui.min.js'></script>
+    <script src="My97Date/WdatePicker.js"></script>
+    <script src="js/统计.js"></script>
+    <style type="text/css">
+    html,body{
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		background-color:rgb(240,240,240); 
+	}
+    	/*整体宽度控制*/	
+	#container {
+		border: 1px solid gray;
+		background-color:rgb(240,240,240); 
+		border-radius: 2px;
+		overflow: hidden;
+		margin:2px;
+	}
+	.title{
+		font-size: 15px;
+		font-family: Microsoft YaHei ,Serif;
+		font-weight:bold; 
+		margin: 10px;
+	}
+	.statisticList{
+		background-color: rgb(240,240,240);
+		float: left;
+		margin-left: 8px;
+	}
+	.statisticChart{
+		float: left;
+	}
+
+	.topBan{
+		background-color: rgb(240,240,240);
+		border-bottom: 1px solid gray;
+	}	
+	.options,.selector{
+		width: 80%;
+		display: table;
+		margin : 0 auto;
+	}
+	.Wdate{
+		width: 100%;
+		margin: 2px auto;		
+		text-align: center;
+		text-align-last: center;
+	}
+	.selector{
+		text-align: center;
+		text-align-last: center;
+	}
+	#leftSlide{
+		float: right;
+		background-color: rgb(240,240,240);
+		border: 0;
+	}
+	#splitLine{
+		float: left;
+		border: 1px solid gray;
+		border-top: 0;
+		border-bottom: 0;
+	}
+	.charts{
+		background-color: #fff;
+
+	}
+	.search{
+		margin-top: 5px;
+	}
+    </style>
+</head>
+<body>
+    <div id="container">
+     	<div class="statisticList">
+     		<div class="topBan"><button id="leftSlide">《</button></div>
+     		<p class="title">统计时段:</p>
+     		<div class="options">
+	     		<input id="data1" type="text" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy年M月d日'})"/><br>
+	     		<input id="data2" type="text" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy年M月d日'})"/>
+	     	</div>    		
+     		<p class="title">查询方式:</p>
+     		<div class="options">
+	     		<input id="ra1" type="radio" name="mode" checked value="allot">生育期
+	     		<input id="ra2" type="radio" name="mode" value="allot">月数据<br>
+	     		<input id="ra3" type="radio" name="mode" value="allot">旬数据
+	     		<input id="ra4" type="radio" name="mode" value="allot">日数据
+	     	</div>
+     		<div  class="title" style="margin-bottom:0px"><p style="display: inline;">区域查询:</p>
+     			<select id="selector1">
+				  <option value="volvo">全部</option>
+				  <option value="saab">1区</option>
+				  <option value="opel">2区</option>
+				  <option value="audi">3区</option>
+				</select></div>
+			<br>
+			<div class="options">
+	     		<input id="ra5" type="radio" name="region" checked value="allot">省级
+	     		<input id="ra6" type="radio" name="region" value="allot">区域<br>
+	     		<input id="ra7" type="radio" name="region" value="allot">市级
+	     		<input id="ra8" type="radio" name="region" value="allot">单站
+	     	</div>
+     		<p class="title">气象要素:</p>
+     		<select class="selector" id="selector2">
+				  <option value="volvo">平均气温</option>
+				  <option value="saab">最高气温</option>
+				  <option value="opel">最低气温</option>
+				  <option value="audi">≥0℃活动积温</option>
+				  <option value="audi">≥10℃活动积温</option>
+				  <option value="audi">≥0℃有效积温</option>
+				  <option value="audi">≥10℃有效积温</option>
+			</select><br>
+			<center><button class="search">查询</button></center>
+     	</div>
+     	<div id='splitLine'></div>
+     	<div class="statisticChart">
+     		<div id="showNumber"><input type="checkbox" name="check_show">显示数值</div>
+     		<div class="charts" id="myChart1"></div>
+     	</div>
+    </div>
+</body>
+
+</html>
